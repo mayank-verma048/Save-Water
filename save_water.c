@@ -4,45 +4,17 @@
 #include <stdio.h>
 #include "cross_sleep.h"
 #include "color_conv.h"
+#include "renderer.h"
+#include "sky.h"
+#include "land.h"
+#include "building.h"
 
 
 
-//Screen Resolution
-int W = 1920;
-int H = 1080;
-
-int pSize=0;
-void (*render_proc[100])();
-
-float gx(unsigned int x){
- return -1.0 + (2.0/W)*x;
-}
-
-float gy(unsigned int y){
- return -1.0 + (2.0/H)*y;
-}
 
 /*                                                                                 Constants                                       */
 
-//Sky Coordinates
-float sky_x[4];//= {gx(0),gx(1920),gx(1920),gx(0)};
-float sky_y[4];//= {gy(300),gy(300),gy(1080),gy(1080)};
-float sky_z[4];//= {0,0,0,0};
-void skyInit(){
- sky_x[0]= gx(0);
- sky_x[1]= gx(1920);
- sky_x[2]= gx(1920);
- sky_x[3]= gx(0);
- sky_y[0]= gy(300);
- sky_y[1]= gy(300);
- sky_y[2]= gy(1080);
- sky_y[3]= gy(1080);
- sky_z[0]= 0;
- sky_z[1]= 0;
- sky_z[2]= 0;
- sky_z[3]= 0;
-}
-
+//sky.c
 
 
 void drawText(float x, float y, float r, float g, float b, const char *string){
@@ -60,59 +32,7 @@ void drawText1(float x, float y, float r, float g, float b, const char *string){
  for(i=0;i<strlen(string);i++)glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,string[i]);
 }
 
-void init(void){
- glClearColor(0,0,0,0);
- glClearDepth(1.0f);
-
-}
-
-void render(void){
- int i;
- // clear the drawing buffer.
- glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-
- //Iterate through all render procedures
- for(i=0;i<pSize;i++)render_proc[i]();
- glutSwapBuffers();
-}
-
-
-
-
-void reshape(GLsizei width, GLsizei height) {  
-   // Compute aspect ratio of the new window
-
-   /*if (height == 0) height = 1;                // To prevent divide by 0
-   GLfloat aspect = (GLfloat)width / (GLfloat)height;
- 
-   // Set the viewport to cover the new window
-   glViewport(0,0, width, height);
- 
-   // Set the aspect ratio of the clipping area to match the viewport
-   glMatrixMode(GL_PROJECTION);  // To operate on the Projection matrix
-   glLoadIdentity();             // Reset the projection matrix
-   if (width >= height) {
-     // aspect >= 1, set the height from -1 to 1, with larger width
-      gluOrtho2D(-1.0 *aspect, 1.0 * aspect, -1.0, 1.0);
-   } else {
-      // aspect < 1, set the width to -1 to 1, with larger height
-     gluOrtho2D(-1.0, 1.0, -1.0 / aspect, 1.0 / aspect);
-   }*/
-
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  glutPostRedisplay();
-}
-
-
-
-void register_func(void (*func)()){
- render_proc[pSize++]=func;
-}
-
-void clear_render(){
- pSize=0;
-}
+//renderer.c code here
 
 
 
@@ -161,28 +81,7 @@ void renderAnimatedText(){
  
 }
 
-//Render for sky
-struct skyStates{
- float *x;
- float *y;
- float *z;
- float r1;
- float g1;
- float b1;
- int i;
-}sState;
-void renderSky(){
- glColor3f(sState.r1,sState.g1,sState.b1);
- printf("&%f %f %f %f %f %f %f %f&\n",sState.x[0],sState.x[1],sState.x[2],sState.x[3],sState.y[0],sState.y[1],sState.y[2],sState.y[3]);
- printf("^%f %f %f %f %f %f %f %f^\n",gx(0),gx(1920),gx(1920),gx(0),gy(300),gy(300),gy(1080),gy(1080));
- glBegin(GL_POLYGON);
-  glVertex3f(sState.x[0],sState.y[0],0);
-  glVertex3f(sState.x[1],sState.y[1],0);
-  glVertex3f(sState.x[2],sState.y[2],0);
-  glVertex3f(sState.x[3],sState.y[3],0);
- glEnd();
-
-}
+//sky.c
 
 
 /*                                                                 All animation functions here                                       */
@@ -207,82 +106,71 @@ int drawAnimatedText(float x, float y, float r, float g, float b, const char *st
   t.i=i;
   register_func(renderAnimatedText);
   drawAnimatedTextRegistered=1;
-  glutPostRedisplay();
+  //glutPostRedisplay();
   
  } else {
   
   t.i=i;
-  glutPostRedisplay();
+  //glutPostRedisplay();
  }
 
  return (i++==(strlen(string)-1))?1:0;
   
 }
 
-int drawAnimatedSkyRegistered=0;
-void setSkyColor(float r1,float g1,float b1){
- sState.r1=r1;
- sState.g1=g1;
- sState.b1=b1;
-}
-int drawAnimatedSky(float *x,float *y,float *z,float r, float g, float b){
- static int i=0;
- if(drawAnimatedSkyRegistered==0){
-  skyInit();
-  sState.x=x;
-  sState.y=y;
-  sState.z=z;
-  sState.r1=r;
-  sState.g1=g;
-  sState.b1=b;
-  sState.i=i;
-  register_func(renderSky);
-  drawAnimatedSkyRegistered=1;
-  
- } else {
- if(i<10)setSkyColor(sState.r1=0.051,0.278,0.631);
- else if(i<20)setSkyColor(0.082, 0.396, 0.753);
- else if(i<30)setSkyColor(0.098, 0.463, 0.824);
- else if(i<40)setSkyColor(0.118, 0.533, 0.898);
- else if(i<50)setSkyColor(0.129, 0.588, 0.953);
- else if(i<60)setSkyColor(0.259, 0.647, 0.961);
- else if(i<70)setSkyColor(0.392, 0.71, 0.965);
- else if(i<80)setSkyColor(1,1,1);
-  sState.i=i;
- }
- glutPostRedisplay();
- 
- 
- return ((i++) == 80 ? 1:0);
+//sky.c
+
+int toggle=1;
+void toggleAnimation(){
+ toggle=toggle?0:1;
 }
 
-//Animation Manager
+/*Animation Manager:
+Format stepx_y where x=scene_no, y=sequence_no
+Drawings in a scene in same sequence_no are rendered sequentially.
+Drawings in a scene in different sequence_no are rendered paralelly.
+*/ 
 int step1_1=-1;
 int step2_1=0;
+int step2_2=0;
+int step2_3=0;
 
-int scene=1;
+int scene=2;
 
 void animate(){
 
-  
- if(scene==1){
-  switch(step1_1){
-   case -1:sleep_ms(50);step1_1++;break; //Proper Screen Refresh
-   case 0:
-    step1_1+=drawAnimatedText(gx(850), gy(1000), 0.4, 0.21, 1, "Save Water, Maintain Peace!");
-    sleep_ms(100);
-    break;
-   case 1:
-    step1_1+=drawStaticText();
-    break;
-  }
- } else if(scene==2){
-  switch(step2_1){
-   case 0:
+ if(toggle){
+  if(scene==1){
+   switch(step1_1){
+    case -1:sleep_ms(50);step1_1++;break; //Proper Screen Refresh
+    case 0:
+     step1_1+=drawAnimatedText(gx(850), gy(1000), 0.4, 0.21, 1, "Save Water, Maintain Peace!");
+     sleep_ms(100);
+     break;
+    case 1:
+     step1_1+=drawStaticText();
+     break;
+   }
+  } 
+  else if(scene==2){
+   switch(step2_1){
+    case 0:
     
-    step2_1+=drawAnimatedSky(sky_x,sky_y,sky_z,0,0,1);
-    sleep_ms(100);
-    break;
+     step2_1+=drawAnimatedSky(0,0,1);
+    
+     break;
+   }
+   switch(step2_2){
+    case 0:
+     step2_2+=drawAnimatedLand();
+     break;
+   }
+   switch(step2_3){
+    case 0:
+     step2_3+=drawAnimatedBuilding();
+     break;
+   }
+   sleep_ms(30);
   }
  }
  
@@ -313,6 +201,11 @@ void main_menu(unsigned char c,int x,int y){
   clear_render();
   break;
 
+  case 'p':
+  case 'P':
+  toggleAnimation();
+  break;
+
   case 'y':
   case 'Y':
   scene=2;
@@ -328,7 +221,7 @@ int main(int argc, char** argv){
  //we initizlilze the glut. functions
  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB|GLUT_DEPTH);
  glutInitWindowPosition(0,0);
- glutInitWindowSize(W=((argc==3)?atoi(argv[0]):W),H=((argc==2)?atoi(argv[1]):H));
+ glutInitWindowSize(W=((argc==3)?atoi(argv[1]):W),H=((argc==2)?atoi(argv[2]):H));
  glutCreateWindow(argv[0]);
  init();
  glutDisplayFunc(render);
