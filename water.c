@@ -83,7 +83,7 @@ struct waterStates{
 void renderwater(){
  int i;
  int j;
- glColor3f(waterState.r,waterState.g,waterState.b);
+ glColor4f(waterState.r,waterState.g,waterState.b,0.3);
  //printf("&%f %f %f %f %f %f %f %f&\n",waterState.x[0],waterState.x[1],waterState.x[2],waterState.x[3],waterState.y[0],waterState.y[1],waterState.y[2],waterState.y[3]);
  //printf("^%f %f %f %f %f %f %f %f^\n",gx(0),gx(1920),gx(1920),gx(0),gy(300),gy(300),gy(1080),gy(1080));
 

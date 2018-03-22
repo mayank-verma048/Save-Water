@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 #include "cross_sleep.h"
 #include "color_conv.h"
 #include "renderer.h"
@@ -11,7 +12,8 @@
 #include "camera.h"
 #include "water.h"
 
-
+#define SPEED 0.03
+#define SPEEDR 0.005
 
 /*                                                                                 Constants                                       */
 
@@ -159,7 +161,7 @@ void animate(){
   else if(scene==2){
    switch(step2_0){
     case 0:
-     cam_eye_y+=(cam_eye_y<0.8)?0.01:0;
+     //cam_eye_y+=(cam_eye_y<0.8)?0.01:0;
     break;
    }
    switch(step2_1){
@@ -227,6 +229,59 @@ void main_menu(unsigned char c,int x,int y){
   case 'Q':
   exit(0);
   break;
+
+  case 'w':
+   cam_eye_z-=SPEED;
+   ref_z -=SPEED;
+  break;
+
+  case 's':
+   cam_eye_z+=SPEED;
+   ref_z +=SPEED;
+  break;
+
+  case 'a':
+   cam_eye_x-=SPEED;
+   ref_x -=SPEED;
+  break;
+
+  case 'd':
+   cam_eye_x+=SPEED;
+   ref_x +=SPEED;
+  break;
+
+  case 'y':
+   cam_eye_y+=SPEED;
+   ref_y +=SPEED;
+  break;
+
+
+  case 'h':
+   cam_eye_y-=SPEED;
+   ref_y -=SPEED;
+  break;
+
+  case 'A':
+   ref_x = cam_eye_x + (ref_x-cam_eye_x)*cos(-SPEEDR)-(ref_z-cam_eye_z)*sin(-SPEEDR);
+   ref_z = cam_eye_z + (ref_x-cam_eye_x)*sin(-SPEEDR)+(ref_z-cam_eye_z)*cos(-SPEEDR);
+  break;
+
+  case 'D':
+   ref_x = cam_eye_x + (ref_x-cam_eye_x)*cos(SPEEDR)-(ref_z-cam_eye_z)*sin(SPEEDR);
+   ref_z = cam_eye_z + (ref_x-cam_eye_x)*sin(SPEEDR)+(ref_z-cam_eye_z)*cos(SPEEDR);
+  break;
+
+  case 'W':
+   ref_y = cam_eye_y + (ref_y-cam_eye_y)*cos(-SPEEDR)-(ref_z-cam_eye_z)*sin(-SPEEDR);
+   ref_z = cam_eye_z + (ref_y-cam_eye_y)*sin(-SPEEDR)+(ref_z-cam_eye_z)*cos(-SPEEDR);
+  break;
+
+  case 'S':
+   ref_y = cam_eye_y + (ref_y-cam_eye_y)*cos(SPEEDR)-(ref_z-cam_eye_z)*sin(SPEEDR);
+   ref_z = cam_eye_z + (ref_y-cam_eye_y)*sin(SPEEDR)+(ref_z-cam_eye_z)*cos(SPEEDR);
+  break;
+
+
  }
  glutPostRedisplay();
  
@@ -246,6 +301,8 @@ int main(int argc, char** argv){
  glutKeyboardFunc(main_menu);
  glutIdleFunc(animate);
  glutFullScreen();
+ glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+ glEnable(GL_BLEND);
  glEnable(GL_DEPTH_TEST);
  
  glutMainLoop();
