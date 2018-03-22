@@ -1,5 +1,6 @@
 #include <GL/glut.h>
 #include "renderer.h"
+#include "camera.h"
 //Screen Resolution
 unsigned int W = 1920;
 unsigned int H = 1080;
@@ -7,11 +8,11 @@ unsigned int H = 1080;
 unsigned int pSize=0;
 void (*render_proc[100])();
 
-float gx(unsigned int x){
+float gx(float x){
  return -1.0 + (2.0/W)*x;
 }
 
-float gy(unsigned int y){
+float gy(float y){
  return -1.0 + (2.0/H)*y;
 }
 
@@ -24,16 +25,11 @@ void init(void){
 
 void render(void){
  int i;
- static int j=0;
  // clear the drawing buffer.
  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
  //Camera movement MOVE IT TO SPEPARATE FILE
- glMatrixMode (GL_MODELVIEW);
- glLoadIdentity ();             /* clear the matrix */
-           /* viewing transformation  */
- gluLookAt (0.0, 0.2+((((j)/100.0)<1.8)?(j/100.0):1.8), 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
- j++;
+ cameraUpdate();
  //Iterate through all render procedures
  for(i=0;i<pSize;i++)render_proc[i]();
  glutSwapBuffers();
@@ -69,12 +65,12 @@ void reshape(GLsizei width, GLsizei height) {
   glLoadIdentity();
   //gluLookAt(0, 0, 0, 0, 0,-1, 0, 1, 0);*/
   glMatrixMode (GL_PROJECTION);
-   glLoadIdentity ();
+  glLoadIdentity ();
   glFrustum (-1.0, 1.0, -1.0, 1.0, 5.0, 10.0);
-   glMatrixMode (GL_MODELVIEW);
-   glLoadIdentity ();             /* clear the matrix */
-           /* viewing transformation  */
-   gluLookAt (0.0, 0.2, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+  glMatrixMode (GL_MODELVIEW);
+  glLoadIdentity ();        
+  gluLookAt (0.0, 0.2, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
   glutPostRedisplay();
 }
 

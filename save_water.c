@@ -8,7 +8,8 @@
 #include "sky.h"
 #include "land.h"
 #include "building.h"
-
+#include "camera.h"
+#include "water.h"
 
 
 
@@ -20,7 +21,7 @@
 void drawText(float x, float y, float r, float g, float b, const char *string){
  int i;
  glColor3f(r, g, b);
- glRasterPos2f(x, y);
+ glRasterPos3f(x, y,-0.1);
  for(i=0;i<strlen(string);i++)glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, string[i]);
 }
 
@@ -28,7 +29,7 @@ void drawText1(float x, float y, float r, float g, float b, const char *string){
  int i;
 
  glColor3f(r, g, b);
- glRasterPos2f(x, y);
+ glRasterPos3f(x, y,-0.1);
  for(i=0;i<strlen(string);i++)glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,string[i]);
 }
 
@@ -59,7 +60,7 @@ void renderStaticText(){
  drawText1(gx(850), gy(760), 1, 1, 0.2, "Guest Faculty of DSCE");
 
 
- drawText(gx(850), gy(740), 0, 1, 0, "PRESS 'x' FOR MANUAL PAGE");
+ drawText(gx(850), gy(740), 0, 1, 0, "PRESS '2' FOR NEXT SCENE");
 }
 
 //Render for animated text
@@ -76,7 +77,7 @@ void renderAnimatedText(){
  int i;
  //printf("Hello %f %f %d\n",t.x,t.y,t.i);
  glColor3f(t.r, t.g, t.b);
- glRasterPos2f(t.x, t.y);
+ glRasterPos3f(t.x, t.y,-0.1);
  for(i=0;i<=t.i;i++)glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, t.string[i]);
  
 }
@@ -106,19 +107,19 @@ int drawAnimatedText(float x, float y, float r, float g, float b, const char *st
   t.i=i;
   register_func(renderAnimatedText);
   drawAnimatedTextRegistered=1;
-  //glutPostRedisplay();
+  glutPostRedisplay();
   
  } else {
   
   t.i=i;
-  //glutPostRedisplay();
+  glutPostRedisplay();
  }
 
  return (i++==(strlen(string)-1))?1:0;
   
 }
 
-//sky.c
+
 
 int toggle=1;
 void toggleAnimation(){
@@ -131,11 +132,13 @@ Drawings in a scene in same sequence_no are rendered sequentially.
 Drawings in a scene in different sequence_no are rendered paralelly.
 */ 
 int step1_1=-1;
+int step2_0=0;
 int step2_1=0;
 int step2_2=0;
 int step2_3=0;
+int step2_4=0;
 
-int scene=2;
+int scene=1;
 
 void animate(){
 
@@ -144,7 +147,7 @@ void animate(){
    switch(step1_1){
     case -1:sleep_ms(50);step1_1++;break; //Proper Screen Refresh
     case 0:
-     step1_1+=drawAnimatedText(gx(850), gy(1000), 0.4, 0.21, 1, "Save Water, Maintain Peace!");
+     step1_1+=drawAnimatedText(gx(840), gy(1000), 0.4, 0.21, 1, "Save Water, Maintain Peace!");
      sleep_ms(100);
      break;
     case 1:
@@ -152,12 +155,16 @@ void animate(){
      break;
    }
   } 
+
   else if(scene==2){
+   switch(step2_0){
+    case 0:
+     cam_eye_y+=(cam_eye_y<0.8)?0.01:0;
+    break;
+   }
    switch(step2_1){
     case 0:
-    
      step2_1+=drawAnimatedSky(0,0,1);
-    
      break;
    }
    switch(step2_2){
@@ -168,6 +175,11 @@ void animate(){
    switch(step2_3){
     case 0:
      step2_3+=drawAnimatedBuilding();
+     break;
+   }
+   switch(step2_4){
+    case 0:
+     step2_4+=drawAnimatedWater();
      break;
    }
    sleep_ms(30);
@@ -206,9 +218,14 @@ void main_menu(unsigned char c,int x,int y){
   toggleAnimation();
   break;
 
-  case 'y':
-  case 'Y':
+  case '2':
+  if(scene!=2)clear_render();
   scene=2;
+  break;
+
+  case 'q':
+  case 'Q':
+  exit(0);
   break;
  }
  glutPostRedisplay();

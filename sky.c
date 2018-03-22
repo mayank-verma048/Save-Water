@@ -13,8 +13,8 @@ void skyInit(){
  sky_x[1]= gx(2*1920);
  sky_x[2]= gx(2*1920);
  sky_x[3]= -2;
- sky_y[0]= gy(300);
- sky_y[1]= gy(300);
+ sky_y[0]= gy(0);
+ sky_y[1]= gy(0);
  sky_y[2]= gy(2*1080);
  sky_y[3]= gy(2*1080);
  sky_z[0]= -2;

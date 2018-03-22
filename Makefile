@@ -1,5 +1,5 @@
 TARGET = save_water
-LIBS = -lGL -lGLU -lglut
+LIBS = -lGL -lGLU -lglut -lm
 CC = gcc
 CFLAGS = -g -Wall
 

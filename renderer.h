@@ -4,8 +4,8 @@
 extern unsigned int W;
 extern unsigned int H;
 
-float gx(unsigned int x);
-float gy(unsigned int y);
+float gx(float x);
+float gy(float y);
 void init(void);
 void render(void);
 void reshape(GLsizei width, GLsizei height);

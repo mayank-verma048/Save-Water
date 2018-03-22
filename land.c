@@ -5,22 +5,37 @@
 #include "color_conv.h"
 
 //land Coordinates
-float land_x[8];//= {gx(0),gx(1920),gx(1920),gx(0)};
-float land_y[8];//= {gy(300),gy(300),gy(1080),gy(1080)};
-float land_z[8];//= {0,0,0,0};
+float land_x[8];
+float land_y[8];
+float land_z[8];
 void landInit(){
  land_x[0]= -2;
  land_x[1]= gx(1920/4);
  land_x[2]= gx(1920/4);
  land_x[3]= -2;
- land_y[0]= gy(0);
- land_y[1]= gy(0);
+ land_x[4]= gx(1440);
+ land_x[5]= 2;
+ land_x[6]= 2;
+ land_x[7]= gx(1440);
+
+ land_y[0]= gy(300);
+ land_y[1]= gy(300);
  land_y[2]= gy(300);
  land_y[3]= gy(300);
+ land_y[4]= gy(300);
+ land_y[5]= gy(300);
+ land_y[6]= gy(300);
+ land_y[7]= gy(300);
+
+
  land_z[0]= 0;
  land_z[1]= 0;
  land_z[2]= -2;
  land_z[3]= -2;
+ land_z[4]= 0;
+ land_z[5]= 0;
+ land_z[6]= -2;
+ land_z[7]= -2;
 }
 
 //Render for land
@@ -34,15 +49,16 @@ struct landStates{
  int i;
 }landState;
 void renderland(){
- 
+ int i;
  glColor3f(landState.r,landState.g,landState.b);
  //printf("&%f %f %f %f %f %f %f %f&\n",landState.x[0],landState.x[1],landState.x[2],landState.x[3],landState.y[0],landState.y[1],landState.y[2],landState.y[3]);
  //printf("^%f %f %f %f %f %f %f %f^\n",gx(0),gx(1920),gx(1920),gx(0),gy(300),gy(300),gy(1080),gy(1080));
  glBegin(GL_POLYGON);
-  glVertex3f(landState.x[0],landState.y[0],land_z[0]);
-  glVertex3f(landState.x[1],landState.y[1],land_z[1]);
-  glVertex3f(landState.x[2],landState.y[2],land_z[2]);
-  glVertex3f(landState.x[3],landState.y[3],land_z[3]);
+  for(i=0;i<4;i++)glVertex3f(landState.x[i],landState.y[i],land_z[i]);
+ glEnd();
+  
+ glBegin(GL_POLYGON);
+  for(i=4;i<8;i++)glVertex3f(landState.x[i],landState.y[i],land_z[i]);
  glEnd();
 
 
