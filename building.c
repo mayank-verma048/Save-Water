@@ -1,5 +1,6 @@
 #include <GL/glut.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "renderer.h"
 #include "building.h"
 #include "color_conv.h"
@@ -8,6 +9,7 @@
 float building_x[2000];//= {gx(0),gx(1920),gx(1920),gx(0)};
 float building_y[2000];//= {gy(300),gy(300),gy(1080),gy(1080)};
 float building_z[2000];//= {0,0,0,0};
+
 void buildingInit(){
  //top
  building_x[0]= gx(20);
@@ -98,6 +100,7 @@ void buildingInit(){
  building_z[17]= -0.4;
  building_z[18]= -0.4;
  building_z[19]= 0;
+
 }
 
 int no=1;
@@ -202,6 +205,10 @@ void initSpecs(float x,float y,float z,float length, float depth){
  no++;
 }
 
+int random_(){
+ return ((rand()%100)<50)? -1:1;
+}
+
 //Render for building
 struct buildingStates{
  float *x;
@@ -214,22 +221,28 @@ struct buildingStates{
 }buildingState;
 void renderbuilding(){
  int i,j;
+ float k=0;
  
  //printf("&%f %f %f %f %f %f %f %f&\n",buildingState.x[0],buildingState.x[1],buildingState.x[2],buildingState.x[3],buildingState.y[0],buildingState.y[1],buildingState.y[2],buildingState.y[3]);
  //printf("^%f %f %f %f %f %f %f %f^\n",gx(0),gx(1920),gx(1920),gx(0),gy(300),gy(300),gy(1080),gy(1080));
 
- 
+
+
  for(j=0;j<no;j++){
-  if(j==1 && buildingState.i<20)continue;
-  if(j==2 && buildingState.i<50)continue;
+  if(buildingState.i<(j+1)*10)continue;
+  if(buildingState.i>1116 && j>44)continue;
+  
+
+  glColor3f(buildingState.r+((buildingState.i<180?random_():1)*k/100.0),buildingState.g+((buildingState.i<180?random_():1)*k/100.0),buildingState.b+((buildingState.i<180?random_():-1)*k/100.0));
   for(i=0;i<5;i++){
-   glColor3f(buildingState.r,buildingState.g,buildingState.b);
+   
    glBegin(GL_POLYGON);
     glVertex3f(buildingState.x[j*20+0+i*4],buildingState.y[j*20+0+i*4],building_z[j*20+0+i*4]);
     glVertex3f(buildingState.x[j*20+1+i*4],buildingState.y[j*20+1+i*4],building_z[j*20+1+i*4]);
     glVertex3f(buildingState.x[j*20+2+i*4],buildingState.y[j*20+2+i*4],building_z[j*20+2+i*4]);
     glVertex3f(buildingState.x[j*20+3+i*4],buildingState.y[j*20+3+i*4],building_z[j*20+3+i*4]);
    glEnd();
+   k=(!(k==50.0))?k+1:0;
   }
 
   glColor3f(0,0,0);
@@ -242,7 +255,6 @@ void renderbuilding(){
    glEnd();
   }
  }
-
 
 
 }
@@ -268,7 +280,103 @@ int drawAnimatedBuilding(){
   register_func(renderbuilding);
 
   initSpecs(70,700,-0.7,0.07,0.25);
-  initSpecs(145,800,-0.5,0.085,0.30); 
+  initSpecs(145,800,-0.5,0.085,0.30);
+  initSpecs(0,500,0,0.018,0.05);
+  initSpecs(100,650,-0.1,0.085,0.3);
+  initSpecs(195,720,0,0.035,0.4);
+  initSpecs(250,450,0,0.04,0.2);
+  initSpecs(295,450,0,0.04,0.2);
+
+  initSpecs(100,650,-1.3,0.085,0.3);
+  initSpecs(195,720,-1,0.035,0.4);
+  initSpecs(70,450,-1,0.04,0.2);
+  initSpecs(115,450,-1,0.04,0.2);
+
+
+//new khalisi building
+
+//BURJ KHALIFA TYPE
+  initSpecs(-135,550,-0.225,0.02,0.075);
+  initSpecs(-115,550,-0.225,0.02,0.075);
+  initSpecs(-135,550,-0.3,0.02,0.075);
+  initSpecs(-115,675,-0.3,0.1,0.30);
+  initSpecs(-40,550,-0.225,0.02,0.075);
+  initSpecs(-20,550,-0.3,0.02,0.075);
+  initSpecs(-20,550,-0.225,0.02,0.075);
+  initSpecs(-20,550,-0.525,0.02,0.075);
+  initSpecs(-20,550,-0.6,0.02,0.075);
+  initSpecs(-40,550,-0.6,0.02,0.075);
+  initSpecs(-135,550,-0.525,0.02,0.075);
+  initSpecs(-135,550,-0.6,0.02,0.075);
+  initSpecs(-115,550,-0.6,0.02,0.075);
+  initSpecs(-95,825,-0.375,0.06,0.150);
+  initSpecs(-75,950,-0.450,0.02,0.075);
+  initSpecs(-65,1080,-0.475,0.005,0.00225);
+  //Khalifa done for khaleesi
+
+  initSpecs(340,500,-0.75,0.06,0.075);
+  initSpecs(415,525,-0.75,0.06,0.075); 
+  initSpecs(250,450,-0.85,0.1425,0.1);
+  initSpecs(415,525,-0.85,0.06,0.075);
+  
+  initSpecs(290,450,-1.35,0.04,0.2);
+  initSpecs(275,450,-1.1,0.04,0.2);
+
+  initSpecs(340,500,-1.5,0.06,0.075);
+  initSpecs(415,525,-1.5,0.06,0.075); 
+  initSpecs(340,500,-1.35,0.06,0.075);
+  initSpecs(415,525,-1.35,0.06,0.075); 
+  initSpecs(250,450,-1.6,0.1425,0.1);
+  initSpecs(415,525,-1.6,0.06,0.075);
+
+  initSpecs(250,500,-1.0,0.06,0.075);
+  initSpecs(325,500,-1.0,0.07,0.25);
+  initSpecs(405,500,-1.0,0.07,0.25);
+
+  //overseas
+  initSpecs(1510,700,-0.7,0.07,0.25);
+  initSpecs(1585,800,-0.5,0.085,0.30);
+  initSpecs(1540,650,-0.1,0.085,0.3);
+  initSpecs(1635,720,0,0.035,0.4);
+  initSpecs(1690,450,0,0.04,0.2);
+  initSpecs(1735,450,0,0.04,0.2);
+  
+  initSpecs(1690,450,-0.5,0.04,0.2);
+  initSpecs(1735,450,-0.5,0.04,0.2);
+
+  initSpecs(1810,675,-0.65,0.1,0.30);
+  initSpecs(1810,675,-0.3,0.1,0.30);
+  initSpecs(1830,825,-0.725,0.06,0.150);
+    
+  initSpecs(1540,650,-1.3,0.085,0.3);
+  initSpecs(1635,720,-1.1,0.035,0.4);
+  initSpecs(1510,450,-1,0.04,0.2);
+  initSpecs(1555,450,-1,0.04,0.2);
+  //
+  initSpecs(1710,450,-1.35,0.04,0.2);
+  initSpecs(1695,450,-1.1,0.04,0.2);
+
+  initSpecs(1760,500,-1.5,0.06,0.075);
+  initSpecs(1835,525,-1.5,0.06,0.075); 
+  initSpecs(1760,500,-1.35,0.06,0.075);
+  initSpecs(1835,525,-1.35,0.06,0.075); 
+  initSpecs(1670,450,-1.6,0.1425,0.1);
+  initSpecs(1835,525,-1.6,0.06,0.075);
+
+  initSpecs(1670,500,-1.0,0.06,0.075);
+  initSpecs(1745,500,-1.0,0.07,0.25);
+  initSpecs(1825,500,-1.0,0.07,0.25);
+ 
+  //
+  initSpecs(1910,700,-1.4,0.07,0.25);
+  initSpecs(1985,800,-1.4,0.085,0.30);
+  initSpecs(1910,700,-1.0,0.07,0.25);
+  initSpecs(1985,800,-1.0,0.085,0.30);
+  initSpecs(1940,650,-0.2,0.085,0.3);
+  initSpecs(2035,720,-0.4,0.035,0.4);
+  initSpecs(2090,450,-0.05,0.04,0.2);
+  initSpecs(2135,450,-0.05,0.04,0.2);
+
   
   drawAnimatedBuildingRegistered=1;
   
@@ -282,6 +390,6 @@ int drawAnimatedBuilding(){
  }
  glutPostRedisplay();
  
- 
- return ((i++) == 80 ? 1:0);
+ //printf("%d ",no*20);
+ return ((i++) == no*20 ? 1:0);
 }

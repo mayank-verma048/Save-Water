@@ -92,8 +92,11 @@ void renderwater(){
  for(i=0,j=0;i<DIV;i++,j+=2){
   water_y[j]=gy(280)+((gy(300)-gy(280))*sin((float)i/SCALE+waterState.i/10.0));
   water_y[j+1]=gy(280)+((gy(300)-gy(280))*sin((float)i/SCALE+waterState.i/10.0));
+  water_y[j]   -= (waterState.i<950)? 0.0005*waterState.i:0.0005*950;
+  water_y[j+1] -= (waterState.i<950)? 0.0005*waterState.i:0.0005*950;
   //printf("%f %f %f\n",water_x[i],water_y[i],water_z[i]);
  }
+ //printf("\n");
 
  /*for(i=0;i<=DIV;i++){
   water_y[i]=gy(280)+((gy(300)-gy(280))*sin((float)i/5+waterState.i/10.0));
@@ -110,6 +113,13 @@ void renderwater(){
 
  glBegin(GL_QUAD_STRIP);
   for(i=0;i<2*(DIV);i++)glVertex3f(waterState.x[i],waterState.y[i],water_z[i]);
+ glEnd();
+
+  glBegin(GL_QUAD_STRIP);
+  for(i=0;i<2*(DIV);i+=2){
+   glVertex3f(waterState.x[i],waterState.y[i],water_z[i]);
+   glVertex3f(waterState.x[i],gy(0),waterState.z[i]);
+  }
  glEnd();
 
  /*glColor3f(1,0,0);

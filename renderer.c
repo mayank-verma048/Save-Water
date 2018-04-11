@@ -67,10 +67,11 @@ void reshape(GLsizei width, GLsizei height) {
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
   glFrustum (-1.0, 1.0, -1.0, 1.0, 5.0, 10.0);
+  //gluPerspective(5.0f,1,5.0,100.0);
 
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();        
-  gluLookAt (0.0, 0.2, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+  gluLookAt (0.0, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
   glutPostRedisplay();
 }
 

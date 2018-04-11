@@ -11,6 +11,9 @@
 #include "building.h"
 #include "camera.h"
 #include "water.h"
+#include "rocket.h"
+#include "tank.h"
+#include "bomb.h"
 
 #define SPEED 0.03
 #define SPEEDR 0.005
@@ -139,6 +142,9 @@ int step2_1=0;
 int step2_2=0;
 int step2_3=0;
 int step2_4=0;
+int step2_5=0;
+int step2_6=0;
+int step2_7=0;
 
 int scene=1;
 
@@ -182,6 +188,21 @@ void animate(){
    switch(step2_4){
     case 0:
      step2_4+=drawAnimatedWater();
+     break;
+   }
+   switch(step2_5){
+    case 0:
+     step2_5+=drawAnimatedRocket();
+     break;
+   }
+   switch(step2_6){
+    case 0:
+     step2_6+=drawAnimatedTank();
+     break;
+   }
+   switch(step2_7){
+    case 0:
+     step2_7+=drawAnimatedBomb();
      break;
    }
    sleep_ms(30);
@@ -281,6 +302,14 @@ void main_menu(unsigned char c,int x,int y){
    ref_z = cam_eye_z + (ref_y-cam_eye_y)*sin(SPEEDR)+(ref_z-cam_eye_z)*cos(SPEEDR);
   break;
 
+  case 'u':
+   zoom+=SPEED;
+  break;
+
+  case 'j':
+   zoom-=SPEED;
+  break;
+
 
  }
  glutPostRedisplay();
@@ -304,6 +333,7 @@ int main(int argc, char** argv){
  glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
  glEnable(GL_BLEND);
  glEnable(GL_DEPTH_TEST);
+ //glEnable(GL_DEPTH_CLAMP);
  
  glutMainLoop();
 
